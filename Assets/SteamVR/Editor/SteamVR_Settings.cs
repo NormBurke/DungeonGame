@@ -18,7 +18,6 @@ public class SteamVR_Settings : EditorWindow
 	const string currentValue = " (current = {0})";
 
 	const string buildTarget = "Build Target";
-	const string showUnitySplashScreen = "Show Unity Splashscreen";
 	const string defaultIsFullScreen = "Default is Fullscreen";
 	const string defaultScreenSize = "Default Screen Size";
 	const string runInBackground = "Run In Background";
@@ -36,7 +35,6 @@ public class SteamVR_Settings : EditorWindow
 #endif
 
 	const BuildTarget recommended_BuildTarget = BuildTarget.StandaloneWindows64;
-	const bool recommended_ShowUnitySplashScreen = false;
 	const bool recommended_DefaultIsFullScreen = false;
 	const int recommended_DefaultScreenWidth = 1024;
 	const int recommended_DefaultScreenHeight = 768;
@@ -66,12 +64,6 @@ public class SteamVR_Settings : EditorWindow
 		bool show =
 			(!EditorPrefs.HasKey(ignore + buildTarget) &&
 				EditorUserBuildSettings.activeBuildTarget != recommended_BuildTarget) ||
-			(!EditorPrefs.HasKey(ignore + showUnitySplashScreen) &&
-#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
-				PlayerSettings.showUnitySplashScreen != recommended_ShowUnitySplashScreen) ||
-#else
-				PlayerSettings.SplashScreen.show != recommended_ShowUnitySplashScreen) ||
-#endif
 			(!EditorPrefs.HasKey(ignore + defaultIsFullScreen) &&
 				PlayerSettings.defaultIsFullScreen != recommended_DefaultIsFullScreen) ||
 			(!EditorPrefs.HasKey(ignore + defaultScreenSize) &&
@@ -229,56 +221,6 @@ public class SteamVR_Settings : EditorWindow
 
 			GUILayout.EndHorizontal();
 		}
-
-#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
-		if (!EditorPrefs.HasKey(ignore + showUnitySplashScreen) &&
-			PlayerSettings.showUnitySplashScreen != recommended_ShowUnitySplashScreen)
-		{
-			++numItems;
-
-			GUILayout.Label(showUnitySplashScreen + string.Format(currentValue, PlayerSettings.showUnitySplashScreen));
-
-			GUILayout.BeginHorizontal();
-
-			if (GUILayout.Button(string.Format(useRecommended, recommended_ShowUnitySplashScreen)))
-			{
-				PlayerSettings.showUnitySplashScreen = recommended_ShowUnitySplashScreen;
-			}
-
-			GUILayout.FlexibleSpace();
-
-			if (GUILayout.Button("Ignore"))
-			{
-				EditorPrefs.SetBool(ignore + showUnitySplashScreen, true);
-			}
-
-			GUILayout.EndHorizontal();
-		}
-#else
-		if (!EditorPrefs.HasKey(ignore + showUnitySplashScreen) &&
-			PlayerSettings.SplashScreen.show != recommended_ShowUnitySplashScreen)
-		{
-			++numItems;
-
-			GUILayout.Label(showUnitySplashScreen + string.Format(currentValue, PlayerSettings.SplashScreen.show));
-
-			GUILayout.BeginHorizontal();
-
-			if (GUILayout.Button(string.Format(useRecommended, recommended_ShowUnitySplashScreen)))
-			{
-				PlayerSettings.SplashScreen.show = recommended_ShowUnitySplashScreen;
-			}
-
-			GUILayout.FlexibleSpace();
-
-			if (GUILayout.Button("Ignore"))
-			{
-				EditorPrefs.SetBool(ignore + showUnitySplashScreen, true);
-			}
-
-			GUILayout.EndHorizontal();
-		}
-#endif
 		if (!EditorPrefs.HasKey(ignore + defaultIsFullScreen) &&
 			PlayerSettings.defaultIsFullScreen != recommended_DefaultIsFullScreen)
 		{
@@ -554,7 +496,6 @@ public class SteamVR_Settings : EditorWindow
 		if (GUILayout.Button("Clear All Ignores"))
 		{
 			EditorPrefs.DeleteKey(ignore + buildTarget);
-			EditorPrefs.DeleteKey(ignore + showUnitySplashScreen);
 			EditorPrefs.DeleteKey(ignore + defaultIsFullScreen);
 			EditorPrefs.DeleteKey(ignore + defaultScreenSize);
 			EditorPrefs.DeleteKey(ignore + runInBackground);
@@ -590,12 +531,6 @@ public class SteamVR_Settings : EditorWindow
 					EditorUserBuildSettings.SwitchActiveBuildTarget(recommended_BuildTarget);
 #else
 					EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, recommended_BuildTarget);
-#endif
-				if (!EditorPrefs.HasKey(ignore + showUnitySplashScreen))
-#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
-					PlayerSettings.showUnitySplashScreen = recommended_ShowUnitySplashScreen;
-#else
-					PlayerSettings.SplashScreen.show = recommended_ShowUnitySplashScreen;
 #endif
 				if (!EditorPrefs.HasKey(ignore + defaultIsFullScreen))
 					PlayerSettings.defaultIsFullScreen = recommended_DefaultIsFullScreen;
@@ -639,12 +574,6 @@ public class SteamVR_Settings : EditorWindow
 					// Only ignore those that do not currently match our recommended settings.
 					if (EditorUserBuildSettings.activeBuildTarget != recommended_BuildTarget)
 						EditorPrefs.SetBool(ignore + buildTarget, true);
-#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
-					if (PlayerSettings.showUnitySplashScreen != recommended_ShowUnitySplashScreen)
-#else
-					if (PlayerSettings.SplashScreen.show != recommended_ShowUnitySplashScreen)
-#endif
-						EditorPrefs.SetBool(ignore + showUnitySplashScreen, true);
 					if (PlayerSettings.defaultIsFullScreen != recommended_DefaultIsFullScreen)
 						EditorPrefs.SetBool(ignore + defaultIsFullScreen, true);
 					if (PlayerSettings.defaultScreenWidth != recommended_DefaultScreenWidth ||
