@@ -23,9 +23,11 @@ public class IngredientPile : MonoBehaviour {
 
 	public void SpawnIngredient(object sender, InteractableObjectEventArgs e) {
 		//((VRTK_InteractableObject)sender).gameObject.GetComponent<Renderer>().enabled = true;
-		GameObject NewObj = Instantiate(startingIngredient, startingIngredient.transform.position, startingIngredient.transform.rotation) as GameObject;
+		Transform PickedUpTransform = ((VRTK_InteractableObject)sender).gameObject.transform;
+		GameObject NewObj = Instantiate(startingIngredient, PickedUpTransform.position, PickedUpTransform.rotation) as GameObject;
 		NewObj.transform.parent = startingIngredient.transform.parent;
-		NewObj.transform.localScale = startingIngredient.transform.localScale;
+		NewObj.transform.localScale = PickedUpTransform.localScale;
+		NewObj.GetComponent<VRTK_InteractableObject>().isGrabbable = true;
 		//NewObj.GetComponent<Renderer>().enabled=false;
 	}
 }
